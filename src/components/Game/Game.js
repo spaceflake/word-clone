@@ -1,5 +1,6 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 
+import { NUM_OF_GUESSES_ALLOWED } from '../../constants';
 import { WORDS } from '../../data';
 import { sample } from '../../utils';
 import GuessInput from '../GuessInput';
@@ -13,37 +14,32 @@ import GuessResult from '../GuessResult';
 function Game() {
   const [guesses, setGuesses] = React.useState([]);
   const [gameState, setGameState] = React.useState('playing');
-  const [answer, setAnswer] = React.useState(sample(WORDS));
+  const [answer, setAnswer] = React.useState(() => sample(WORDS));
 
   console.log({ answer });
 
-  useEffect(() => {
-    const checkGameState = () => {
-      if (guesses.length === 6) {
-        setGameState('lost');
-      }
-
-      if (guesses.includes(answer)) {
-        setGameState('won');
-      }
-    };
-    checkGameState();
-  }, [guesses, answer]);
-
   const handleSubmitGuess = (prelGuess) => {
-    setGuesses([...guesses, prelGuess]);
+    const nextGuesses = [...guesses, prelGuess];
+    setGuesses(nextGuesses);
+
+    if (prelGuess === answer) {
+      setGameState('won');
+    } else if (nextGuesses.length === NUM_OF_GUESSES_ALLOWED) {
+      setGameState('lost');
+    }
   };
 
   const handlePlayAgain = () => {
+    const newAnswer = sample(WORDS);
+    setAnswer(newAnswer);
     setGuesses([]);
     setGameState('playing');
-    setAnswer(sample(WORDS));
   };
 
   return (
     <>
       <GuessResult guesses={guesses} answer={answer} />
-      <GuessInput handleSubmitGuess={handleSubmitGuess} />
+      <GuessInput handleSubmitGuess={handleSubmitGuess} gameState={gameState} />
       {gameState === 'won' && (
         <div className="happy banner">
           <p>
