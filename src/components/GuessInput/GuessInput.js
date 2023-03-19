@@ -1,6 +1,6 @@
 import React from 'react';
 
-export default function GuessInput({ handleSubmitGuess }) {
+export default function GuessInput({ handleSubmitGuess, gameState }) {
   const [prelGuess, setPrelGuess] = React.useState('');
 
   const handleSubmit = (e) => {
@@ -13,6 +13,7 @@ export default function GuessInput({ handleSubmitGuess }) {
       <form className="guess-input-wrapper" onSubmit={handleSubmit}>
         <label htmlFor="guess-input">Enter guess:</label>
         <input
+          disabled={gameState !== 'playing'}
           type="text"
           id="guess-input"
           value={prelGuess}
