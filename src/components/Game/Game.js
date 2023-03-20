@@ -2,9 +2,11 @@ import React from 'react';
 
 import { NUM_OF_GUESSES_ALLOWED } from '../../constants';
 import { WORDS } from '../../data';
+import { checkGuess } from '../../game-helpers';
 import { sample } from '../../utils';
 import GuessInput from '../GuessInput';
 import GuessResult from '../GuessResult';
+import Keyboard from '../Keyboard/Keyboard';
 
 // Pick a random word on every pageload.
 // const answer = sample(WORDS);
@@ -15,8 +17,6 @@ function Game() {
   const [guesses, setGuesses] = React.useState([]);
   const [gameState, setGameState] = React.useState('playing');
   const [answer, setAnswer] = React.useState(() => sample(WORDS));
-
-  console.log({ answer });
 
   const handleSubmitGuess = (prelGuess) => {
     const nextGuesses = [...guesses, prelGuess];
@@ -36,10 +36,13 @@ function Game() {
     setGameState('playing');
   };
 
+  const validGuesses = guesses.map((guess) => checkGuess(guess, answer));
+
   return (
     <>
-      <GuessResult guesses={guesses} answer={answer} />
+      <GuessResult guesses={validGuesses} answer={answer} />
       <GuessInput handleSubmitGuess={handleSubmitGuess} gameState={gameState} />
+      <Keyboard validGuesses={validGuesses} />
       {gameState === 'won' && (
         <div className="happy banner">
           <p>
